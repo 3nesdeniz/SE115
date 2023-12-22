@@ -193,9 +193,7 @@ public class Functions {
             hands[1][9].setIsJoker(true);
    
     }
-    for(int i=0;i<10;i++){
-        hands[0][i].setIsComputerHand(true);
-    }
+
 
     return hands;
 }
@@ -210,8 +208,12 @@ public class Functions {
             while(deck[0][rd1]==null){
             rd1 = rd.nextInt(10);
             }
+                       
+
             hands[0][i] = deck[0][rd1];
             deck[0][rd1]=null;
+            hands[0][i].setIsComputerHand(true);
+
         }
         for(int i=0;i<4;i++){
             rd1= rd.nextInt(10);
@@ -235,13 +237,10 @@ public class Functions {
              if (card != null){
                 
                 if(card.isComputerHand()==true){
-                        if(card.isPlay()==true){
-                        System.out.print("      O      ");
 
-                        }
-                        else{
-                            System.out.print("      X      ");
-                        }
+                       
+                    System.out.print("      X      ");
+                        
                 }
                 else{
                    if(card.isPlay()==true){
@@ -301,18 +300,40 @@ public class Functions {
             deck[rd2][rd1]=null;
     }
     
-    public Cards[][] useCard(Cards[][] gameBoard,Cards[][] hand,int time,int choice ,int who){//who for who play card player or computer
+    public void useCard(Cards[][] gameBoard,Cards[][] hand,int time,int choice ,int who){//who for who play card player or computer
         Scanner sc= new Scanner(System.in);
         if(hand[who][choice]== null){
+            
             System.out.println("Your Choice is wrong try again");
             choice = sc.nextInt();
             useCard(gameBoard,hand,time,choice,who);
         }
-        gameBoard[who][time] = hand[who][choice];
-        hand[who][choice] = null;
-    return gameBoard;
-}
+        else{
+            if(hand[who][choice].getIsJoker()==true){
+                System.out.print("Choice Location To Play :");
+                int choice2=sc.nextInt()-1;
+                if(hand[who][choice]==null){
+                    useCard(gameBoard,hand,time,choice,who);
 
+                }
+                else{
+                    if (hand[who][choice].getNumber() == 0) {
+                        gameBoard[who][choice2].setNumber(gameBoard[who][choice2].getNumber() * 2);
+                    }
+                    else{
+                       gameBoard[who][choice2].setNumber(gameBoard[who][choice2].getNumber() * -1);
+
+                    }
+                }
+            }
+            else{
+                gameBoard[who][time] = hand[who][choice];
+                hand[who][choice] = null; 
+            }
+        
+        
+        }
+    }
     public Cards[][] gameBoard(Cards[][] deck){
         Cards hand[][] = new Cards[2][9];//0. bilgisayar 1. de kullanıcı
         for(int i = 0; i < 2; i++) {
@@ -348,13 +369,13 @@ public class Functions {
     else if(x == 2){
         Scanner sc = new Scanner(System.in);
         try{
-        System.out.println("Choice to play card");
+        System.out.print("Choice to play card : ");
         int choice = sc.nextInt()-1;
         useCard(board,hand,timePlayer,choice,1);
         //do not forget end tour ---
         }
         catch(Exception e){
-            System.out.print("Wrong choice please try again");
+            System.out.println("Wrong choice please try again");
             useChoice(x, deck,board,hand,timePlayer);
         }
     }
@@ -388,7 +409,7 @@ public class Functions {
                 continue;
             }
             else{
-                totalpc = totalplayer+pc[i].getNumber();
+                totalpc = totalpc+pc[i].getNumber();
             }
         }
         
@@ -397,6 +418,48 @@ public class Functions {
         System.out.println("Player Score: "+totalplayer);
     }
 
+    public void pickCardForPc(Cards[][] deck,Cards[][] board,int timePc){
+         Random rd = new Random(System.currentTimeMillis());
+            int rd1 = rd.nextInt(10);
+            int rd2 = rd.nextInt(4);
+            while(deck[rd2][rd1] == null){
+                rd1 = rd.nextInt(10);
+                rd2 = rd.nextInt(4);
+            }
+            
+
+            board[0][timePc] = deck[rd2][rd1];
+            deck[rd2][rd1]=null;
+    }
+    
+    public int playerScore(Cards[] player){
+         int totalPlayer =0;
+        
+        
+        
+        for(int i=0;i<5;i++){
+            if(player[i]==null){
+                continue;
+            }
+            else{
+                totalPlayer = totalPlayer+player[i].getNumber();
+            }
+        }
+        return totalPlayer;
+    }
+    public int computerScore(Cards[] pc){
+            int totalpc =0;
+
+            for(int i=0;i<5;i++){
+            if(pc[i]==null){
+                continue;
+            }
+            else{
+                totalpc = totalpc+pc[i].getNumber();
+            }
+        }
+            return totalpc;
+    }
 
 
 
