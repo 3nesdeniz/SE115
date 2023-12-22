@@ -312,7 +312,7 @@ public class Functions {
             if(hand[who][choice].getIsJoker()==true){
                 System.out.print("Choice Location To Play :");
                 int choice2=sc.nextInt()-1;
-                if(hand[who][choice]==null){
+                if(gameBoard[who][choice2]==null){
                     useCard(gameBoard,hand,time,choice,who);
 
                 }
@@ -334,6 +334,7 @@ public class Functions {
         
         }
     }
+    
     public Cards[][] gameBoard(Cards[][] deck){
         Cards hand[][] = new Cards[2][9];//0. bilgisayar 1. de kullanıcı
         for(int i = 0; i < 2; i++) {
@@ -447,6 +448,7 @@ public class Functions {
         }
         return totalPlayer;
     }
+    
     public int computerScore(Cards[] pc){
             int totalpc =0;
 
@@ -460,10 +462,138 @@ public class Functions {
         }
             return totalpc;
     }
+    
+    public void computerUseCard(Cards[][] gameBoard,Cards[][] hand,int time,int choice ,int who,int locationToPlay){
+
+      
+            if(hand[who][choice].getIsJoker()==true){
+                if(gameBoard[who][locationToPlay]==null){
+                    useCard(gameBoard,hand,time,choice,who);
+
+                }
+                else{
+                    if (hand[who][choice].getNumber() == 0) {
+                        gameBoard[who][locationToPlay].setNumber(gameBoard[who][locationToPlay].getNumber() * 2);
+                    }
+                    else{
+                       gameBoard[who][locationToPlay].setNumber(gameBoard[who][locationToPlay].getNumber() * -1);
+
+                    }
+                }
+            }
+            else{
+                gameBoard[who][time] = hand[who][choice];
+                hand[who][choice] = null; 
+            }
+        
+        
+        }
+     
+    public void computerAI(int computerScore,Cards[][] computerHand,Cards[][] computerBoard,int time,Cards[][] deck){
+        int winCondition = 20;
+        int lengthBoard = computerBoard.length;
+        int lengthHand = computerHand.length;
+        for(int i=0;i<lengthHand;i++){
+            
+                if(computerHand[0][i]!=null){
+                    if(computerHand[0][i].getIsJoker()==true){
+                            if (computerHand[0][i].getNumber() == 0) {
+                                for(int j=0;j<lengthBoard;j++){
+                                    if(computerBoard[0][j]!=null){
+                                        if(computerScore+(2*computerBoard[0][j].getNumber())==20){
+                                            computerUseCard(computerBoard,computerHand,time,i,1,j);
+                                        }else
+                                            pickCardForPc(computerHand,deck,time);
+
+                                    }
+                                }
+                            }
+                            else if(computerHand[0][i].getNumber() == 1) {
+                                 for(int j=0;j<lengthBoard;j++){
+                                if(computerBoard[0][j]!=null){
+                                    if(computerScore+(-1*computerBoard[0][j].getNumber())==20){
+                                        computerUseCard(computerBoard,computerHand,time,i,1,j);
+                                        
+
+                                        }else
+                                        pickCardForPc(computerHand,deck,time);
+                                    }
+                                }
+
+
+                            }
+
+                            
+                        }
+                    
+                    else{
+                        if(computerScore<20){
+                            if (computerHand[0][i].getNumber() == 0) {
+                                for(int j=0;j<lengthBoard;j++){
+                                    if(computerBoard[0][j]!=null){
+                                        if(computerScore + computerBoard[0][j].getNumber() ==20){
+                                            computerUseCard(computerBoard,computerHand,time,j,0,0);
+                                        }
+                                    }
+
+
+                                }
+
+
+                            }
+                        }
+                        else if(computerScore<20&&computerScore<16){
+                            continue;
+                        }
+                        else{
+                            for(int k=0;k<lengthHand;i++){
+                                if(computerHand[0][k].getNumber()<0){
+                                    computerUseCard(computerBoard,computerHand,time,k,0,0);
+                                    
+                                }
+                                else
+                                    pickCardForPc(computerHand,deck,time);
+                                   
+                            }
+                        }
+                        
+                    }
+                }
+           
+        }
+    }
+
+
 
 
 
 
 }
+    
+
+
+
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+
+
     
 
