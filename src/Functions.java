@@ -91,16 +91,14 @@ public class Functions {
 
     }
 
-    public int notZero(int x){
-        Random rd = new Random(System.currentTimeMillis());
-        if (x == 0) {
-            x = rd.nextInt(13) - 6;
-            return notZero(x);
-        }   
-        else {
-           return x;
-        }
+public int notZero(int x) {
+    Random rd = new Random(System.currentTimeMillis());
+    if (x == 0) {
+        return rd.nextInt(13) - 6;
+    } else {
+        return x;
     }
+}
 
     public Cards[][] crateDeck(Cards[][] deck) {
     Cards[][] hands = new Cards[2][10];
@@ -239,7 +237,7 @@ public class Functions {
                 if(card.isComputerHand()==true){
 
                        
-                    System.out.print("      X      ");
+                       System.out.print("     X      ");
                         
                 }
                 else{
@@ -295,7 +293,6 @@ public class Functions {
                 rd2 = rd.nextInt(4);
             }
             
-
             board[1][time] = deck[rd2][rd1];
             deck[rd2][rd1]=null;
     }
@@ -397,7 +394,7 @@ public class Functions {
         
         
         
-        for(int i=0;i<5;i++){
+        for(int i=0;i<9;i++){
             if(player[i]==null){
                 continue;
             }
@@ -405,7 +402,7 @@ public class Functions {
                 totalplayer = totalplayer+player[i].getNumber();
             }
         }
-        for(int i=0;i<5;i++){
+        for(int i=0;i<9;i++){
             if(pc[i]==null){
                 continue;
             }
@@ -420,7 +417,7 @@ public class Functions {
     }
 
     public void pickCardForPc(Cards[][] deck,Cards[][] board,int timePc){
-         Random rd = new Random(System.currentTimeMillis());
+         Random rd = new Random();
             int rd1 = rd.nextInt(10);
             int rd2 = rd.nextInt(4);
             while(deck[rd2][rd1] == null){
@@ -452,7 +449,7 @@ public class Functions {
     public int computerScore(Cards[] pc){
             int totalpc =0;
 
-            for(int i=0;i<5;i++){
+            for(int i=0;i<9;i++){
             if(pc[i]==null){
                 continue;
             }
@@ -465,7 +462,7 @@ public class Functions {
     
     public void computerUseCard(Cards[][] gameBoard,Cards[][] hand,int time,int choice ,int who,int locationToPlay){
 
-      
+        if(hand[who][choice]!=null){
             if(hand[who][choice].getIsJoker()==true){
                 if(gameBoard[who][locationToPlay]==null){
                     useCard(gameBoard,hand,time,choice,who);
@@ -482,93 +479,202 @@ public class Functions {
                 }
             }
             else{
+        hand[who][choice].setIsComputerHand(false);
+
                 gameBoard[who][time] = hand[who][choice];
+                
                 hand[who][choice] = null; 
+            
+                gameBoard[who][time].setIsComputerHand(false);
             }
-        
+        }
         
         }
      
-    public void computerAI(int computerScore,Cards[][] computerHand,Cards[][] computerBoard,int time,Cards[][] deck){
+    public void clearBoard(Cards[][] board){
+        Cards hand[][] = new Cards[2][9];//0. bilgisayar 1. de kullanıcı
+        for(int i = 0; i < 2; i++) {
+            for(int j = 0; j < 9; j++) {
+                hand[i][j] = null;
+            }
+        }
+    }
+    
+    public void computerAI(int computerScore,Cards[][] computerHand,Cards[][] computerBoard,int time,Cards[][] deck,int playerScore,boolean playerStand,boolean computerStand){
         int winCondition = 20;
         int lengthBoard = computerBoard.length;
         int lengthHand = computerHand.length;
+        boolean useCard = false;
+        if(playerScore<computerScore&&computerScore<20&&playerStand == true){
+            computerStand = true;
+        }else{ 
         for(int i=0;i<lengthHand;i++){
-            
-                if(computerHand[0][i]!=null){
-                    if(computerHand[0][i].getIsJoker()==true){
-                            if (computerHand[0][i].getNumber() == 0) {
-                                for(int j=0;j<lengthBoard;j++){
-                                    if(computerBoard[0][j]!=null){
-                                        if(computerScore+(2*computerBoard[0][j].getNumber())==20){
-                                            computerUseCard(computerBoard,computerHand,time,i,1,j);
-                                        }else
-                                            pickCardForPc(computerHand,deck,time);
-
-                                    }
-                                }
-                            }
-                            else if(computerHand[0][i].getNumber() == 1) {
-                                 for(int j=0;j<lengthBoard;j++){
-                                if(computerBoard[0][j]!=null){
-                                    if(computerScore+(-1*computerBoard[0][j].getNumber())==20){
-                                        computerUseCard(computerBoard,computerHand,time,i,1,j);
-                                        
-
-                                        }else
-                                        pickCardForPc(computerHand,deck,time);
-                                    }
-                                }
-
-
-                            }
-
-                            
-                        }
-                    
-                    else{
-                        if(computerScore<20){
-                            if (computerHand[0][i].getNumber() == 0) {
-                                for(int j=0;j<lengthBoard;j++){
-                                    if(computerBoard[0][j]!=null){
-                                        if(computerScore + computerBoard[0][j].getNumber() ==20){
-                                            computerUseCard(computerBoard,computerHand,time,j,0,0);
-                                        }
-                                    }
-
-
-                                }
-
-
+           if(computerHand[0][i]!=null){
+               if(computerHand[0][i].getIsJoker()==true){
+               if (computerHand[0][i].getNumber() == 0) {
+                    for(int j=0;j<lengthBoard;j++){
+                        if(computerBoard[0][j]!=null){
+                            if(computerScore+(2*computerBoard[0][j].getNumber())==20){
+                                computerUseCard(computerBoard,computerHand,time,i,1,j);
+                                useCard=true;
+                                break;
                             }
                         }
-                        else if(computerScore<20&&computerScore<16){
-                            continue;
-                        }
-                        else{
-                            for(int k=0;k<lengthHand;i++){
-                                if(computerHand[0][k].getNumber()<0){
-                                    computerUseCard(computerBoard,computerHand,time,k,0,0);
-                                    
-                                }
-                                else
-                                    pickCardForPc(computerHand,deck,time);
-                                   
-                            }
-                        }
-                        
                     }
                 }
+                else if(computerHand[0][i].getNumber() == 1) {
+                    for(int k=0;k<lengthBoard;k++){
+                        if(computerBoard[0][k]!=null){
+                            if(computerScore+(-1*computerBoard[0][k].getNumber())<=20){
+                                computerUseCard(computerBoard,computerHand,time,i,1,k);
+                                useCard=true;
+
+                                break;
+                                                                            
+                            }
+                        }
+                    }
+                }
+            }else{
+               
+                                
+                                if(computerScore + computerHand[0][i].getNumber() ==20){
+                                    computerUseCard(computerBoard,computerHand,time,i,0,0);
+                                    useCard=true;
+
+                                    break;
+                                
+                                    
+                                
+                            
+                        
+                    }
+                
+           }
            
+           
+           
+           
+     
+           }
+                 
         }
+        
+         if(useCard==false){
+            if(computerScore<17){
+                pickCardForPc(deck, computerBoard, time);
+            }
+            else{
+                computerStand = true;
+            }
+        }
+         }
+
+    }
+
+  
+    public void playGame(){
+    /*    
+        Functions function = new Functions();
+        
+        Cards[][] deck = function.createDeck();//to create deck
+       
+        deck = function.shuffleDeck(deck,4,10);//  to shuffle deck
+       
+        function.startGame(); // to get start screen
+        
+        Cards[][] hands = function.crateDeck(deck);     // to create boards
+        
+        hands = function.dealCards(hands); // to get it to board
+        
+        
+        
+        Cards[][] gameDeck = function.createGameDeck(deck);
+        Cards[][] gameBoard = function.gameBoard(deck);
+
+        function.area("Computer's Hand","Computer's Board","Your Board   ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
+        
+        int timePlayer = 0;
+        int timeComputer = 0;
+        int x=0;
+              boolean playerStand = false;
+        boolean computerStand = false;  
+        while(x<8){
+
+        int playerScore = 0;
+        int choice = function.choice();
+        int pcScore = 0;
+        if(choice==3){
+            playerStand=true;
+        }
+        else{
+                    function.useChoice(choice, gameDeck, gameBoard,hands, timePlayer);
+
+        }
+        
+        timePlayer = timePlayer +1;
+        pcScore = computerScore(gameBoard[0]);
+        playerScore=playerScore(gameBoard[1]);
+        System.out.println("xxx" + pcScore);
+        function.computerAI(pcScore, hands, gameBoard, timeComputer, gameDeck,playerScore,playerStand,computerStand);
+        timeComputer = timeComputer+1;    
+        x=x+1;
+
+        function.area("Computer's Hand","Computer's Board","Your Board     ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
+
+        }    
+    
+      */
+        int tour= 0;
+        
+        while(tour<5){
+            Functions function = new Functions();
+        
+            Cards[][] deck = function.createDeck();//to create deck
+
+            deck = function.shuffleDeck(deck,4,10);//  to shuffle deck
+
+            function.startGame(); // to get start screen
+
+            Cards[][] hands = function.crateDeck(deck);     // to create boards
+
+            hands = function.dealCards(hands); // to get it to board
+
+
+
+            Cards[][] gameDeck = function.createGameDeck(deck);
+            Cards[][] gameBoard = function.gameBoard(deck);
+
+            function.area("Computer's Hand","Computer's Board","Your Board   ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
+        }
+        
+        
+        
+        
+        
+
+            
+            
+            
+            
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     }
 
 
 
 
-
-
-}
     
 
 
