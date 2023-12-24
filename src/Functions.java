@@ -822,6 +822,18 @@ public int notZero(int x) {
                     break;
                 }
             if(playerScore==20){
+                boolean allblueplayer = true;
+                for(int i = 0;i<gameBoard[1].length;i++){
+                    if(gameBoard[1][i]!=null){
+                       if( gameBoard[1][i].getColor()!="blue"){
+                           allblueplayer = false;
+                       }
+                    }
+                }if(allblueplayer == true){
+                    playerWin=3;
+                    break;
+                }
+                
                 if(pcScore==20){
                     System.out.println("There Is Draw");
                     break;
@@ -832,6 +844,18 @@ public int notZero(int x) {
                 }
             }
             if(pcScore==20){
+                boolean allbluepc = true;
+                for(int i = 0;i<gameBoard[1].length;i++){
+                    if(gameBoard[0][i]!=null){
+                       if( gameBoard[0][i].getColor()!="blue"){
+                           allbluepc = false;
+                       }
+                    }
+                }if(allbluepc == true){
+                    computerWin=3;
+                    break;
+                }
+                
                 if(playerScore==20){
                     System.out.println("There Is Draw");
 
@@ -852,6 +876,9 @@ public int notZero(int x) {
                 
                 else if(pcScore>playerScore){
                     computerWin=computerWin+1;
+                    break;
+                }
+                else{
                     break;
                 }
             }
