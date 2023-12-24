@@ -1,5 +1,12 @@
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Formatter;
+import java.io.FileWriter ;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.io.*;
+
 public class Functions {
 
     public Cards[][] createDeck() {
@@ -109,12 +116,12 @@ public class Functions {
 
 public int notZero(int x) {
     Random rd = new Random(System.currentTimeMillis());
-        x = rd.nextInt(13)-6;
-    if (x == 0) {
-        return notZero(x);
-    } else {
-        return x;
+
+    while (x == 0) {
+        x = rd.nextInt(13) - 6;
     }
+
+    return x;
 }
 
     public Cards[][] crateDeck(Cards[][] deck) {
@@ -662,60 +669,53 @@ public int notZero(int x) {
          }
         return computerStand;
     }
+public void writeFile(int playerWin, int computerWin, String name) {
+    Formatter fr = null;
+    FileWriter fw = null;
 
-  
+    try {
+        File file = new File("blueJack.txt");
+        if (file.exists()) {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            int lines = 0;
+            while (reader.readLine() != null) lines++;
+            reader.close();
+
+            if (lines >= 40) {
+                file.delete(); // Dosyayı sil
+                file.createNewFile(); // Yeni dosya oluştur
+            }
+        }
+
+        fw = new FileWriter("blueJack.txt", true);
+        fr = new Formatter(fw);
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        fr.format("Date: %s%n", now.format(formatter));
+        fr.format(name + " Win: %d%n", playerWin);
+        fr.format("Computer Wins: %d%n", computerWin);
+        fr.format("________________________%n");
+        
+
+    } catch (IOException e) {
+        System.out.println("An error occurred while writing to the file.");
+        e.printStackTrace();
+    } finally {
+        try {
+            if (fr != null) {
+                fr.close();
+            }
+            if (fw != null) {
+                fw.close();
+            }
+        } catch (IOException e) {
+            System.out.println("Error in closing the FileWriter/Formatter.");
+            e.printStackTrace();
+        }
+    }
+}//kazananları kaydetme  
     public void playGame(){
-    /*    
-        Functions function = new Functions();
-        
-        Cards[][] deck = function.createDeck();//to create deck
-       
-        deck = function.shuffleDeck(deck,4,10);//  to shuffle deck
-       
-        function.startGame(); // to get start screen
-        
-        Cards[][] hands = function.crateDeck(deck);     // to create boards
-        
-        hands = function.dealCards(hands); // to get it to board
-        
-        
-        
-        Cards[][] gameDeck = function.createGameDeck(deck);
-        Cards[][] gameBoard = function.gameBoard(deck);
 
-        function.area("Computer's Hand","Computer's Board","Your Board   ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
-        
-        int timePlayer = 0;
-        int timeComputer = 0;
-        int x=0;
-              boolean playerStand = false;
-        boolean computerStand = false;  
-        while(x<8){
-
-        int playerScore = 0;
-        int choice = function.choice();
-        int pcScore = 0;
-        if(choice==3){
-            playerStand=true;
-        }
-        else{
-                    function.useChoice(choice, gameDeck, gameBoard,hands, timePlayer);
-
-        }
-        
-        timePlayer = timePlayer +1;
-        pcScore = computerScore(gameBoard[0]);
-        playerScore=playerScore(gameBoard[1]);
-        System.out.println("xxx" + pcScore);
-        function.computerAI(pcScore, hands, gameBoard, timeComputer, gameDeck,playerScore,playerStand,computerStand);
-        timeComputer = timeComputer+1;    
-        x=x+1;
-
-        function.area("Computer's Hand","Computer's Board","Your Board     ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
-
-        }    
-    
-      */
         int tour= 0;
         Functions function = new Functions();
         
@@ -895,61 +895,21 @@ public int notZero(int x) {
             System.out.println("Computer Win The Game... :(");
             System.out.println("Computer Score : " + computerWin);
             System.out.println("Player Score : "+playerWin);
+            writeFile(playerWin,computerWin,name);
         }
         else if(playerWin==3){
             System.out.println(name+ " Win The Game... :)");
             System.out.println("Computer Score : " + computerWin);
-            System.out.println("Player Score : "+playerWin);
+            System.out.println("Player Score : "+playerWin);            
+            writeFile(playerWin,computerWin,name);
+
         }
         else{
             function.inToGame(gameDeck, hands, computerWin, playerWin,deck,name);
         }
         
     }
-      // for all blue you can use for loop in cards do 20 .....(20 olduklarında hepsi blue mu diye kontrol edersin hepsi blue ise 3 yaparsın ??? bundan emin değilim blue 
-    //jack adı nerden geliyor bakmam lazım 
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+    
         
     }
-
-
-
-
-    
-
-
-
-
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    
-
-
-    
-
