@@ -583,7 +583,8 @@ public int notZero(int x) {
         boolean useCard = false;
         if(playerScore<computerScore&&computerScore<20&&playerStand == true){
             computerStand = true;
-        }else{ 
+        }else{
+
         for(int i=0;i<lengthHand;i++){
            if(computerHand[0][i]!=null){
                if(computerHand[0][i].getIsJoker()==true){
@@ -635,6 +636,13 @@ public int notZero(int x) {
            }
                  
         }
+        if(playerScore>computerScore&&computerScore<20&&playerStand == true){
+            computerStand = true;
+            pickCardForPc(deck, computerBoard, time);
+
+ 
+        }
+            
         
          if(useCard==false){
             if(computerScore<17){
