@@ -344,46 +344,77 @@ public int notZero(int x) {
     }
 
     public int choice(){
-        Scanner sc = new Scanner(System.in);
-        int choice = 0;
-           try {
-        System.out.println("Game started. Please enter your choice: ");
-        System.out.print("1 -  Pick Card To Deck.\n2 - To Play Card On Your Hand.\n3 - To Stand.\nEnter your choice: ");
+    Scanner sc = new Scanner(System.in);
+    int choice1 = 0;
+    while(true) {
+        try {
+            System.out.println("Game started. Please enter your choice: ");
+            System.out.print("1 - Pick Card To Deck.\n2 - To Play Card On Your Hand.\n3 - To Stand.\nEnter your choice: ");
 
-        choice = sc.nextInt();
-        } 
-           catch (Exception e) {
-        System.out.println("Invalid input. Please enter a valid choice.");
+            choice1 = sc.nextInt();
+            if(choice1 == 1 || choice1 == 2 || choice1 == 3) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter a valid choice.");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter a valid choice.");
+            sc.next(); // Buffer'ı temizle
         }
-
-    return choice;
     }
+    return choice1;
+}
  
-    public void useChoice(int x, Cards[][] deck,Cards[][] board,Cards[][] hand,int timePlayer){
+    public void useChoice(int x, Cards[][] deck,Cards[][] board,Cards[][] hand,int timePlayer,boolean playerStand){
     if(x == 1){
         pickCard(deck,board,timePlayer);
         timePlayer = timePlayer+1;
-    }
-    else if(x == 2){
-        Scanner sc = new Scanner(System.in);
-        try{
-        System.out.print("Choice to play card : ");
-        int choice = sc.nextInt()-1;
-        useCard(board,hand,timePlayer,choice,1);
-        //do not forget end tour ---
+        Scanner sc2 = new Scanner(System.in);
+        int choice1 =0;
+        area("Computer's Hand","Computer's Board","Your Board     ","Your Hand      ",hand[0],board[0],board[1], hand[1]);
+
+        while(true) {
+        try {
+            System.out.println("Game started. Please enter your choice: ");
+            System.out.print("1 - To Play Card On Your Hand.\n2 - To End Tour.\nEnter your choice: ");
+
+            choice1 = sc2.nextInt();
+            if(choice1 == 1 || choice1 == 2) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter a valid choice.");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid input. Please enter a valid choice.");
+            sc2.next(); 
         }
-        catch(Exception e){
+    }
+        if(choice1 == 1){
+            useChoice(2, deck,board,hand,timePlayer,playerStand);
+        }
+    }
+    else if (x == 2) {
+    Scanner sc = new Scanner(System.in);
+    boolean validChoice = false;
+    while (!validChoice) {
+        try {
+            System.out.print("Choice to play card : ");
+            int choice = sc.nextInt() - 1;
+            useCard(board, hand, timePlayer, choice, 1);
+            validChoice = true;
+        } catch (Exception e) {
             System.out.println("Wrong choice please try again");
-            useChoice(x, deck,board,hand,timePlayer);
+            sc.nextLine();
         }
     }
+}
     else if(x == 3){
-        
+        playerStand = true;
     }
     else{
         System.out.println("Is there some problem please do it again");
         int k = choice();
-        useChoice(k,deck,board,hand,timePlayer);
+        useChoice(k,deck,board,hand,timePlayer,playerStand);
     }
         
     }
@@ -500,7 +531,7 @@ public int notZero(int x) {
         }
     }
     
-    public void computerAI(int computerScore,Cards[][] computerHand,Cards[][] computerBoard,int time,Cards[][] deck,int playerScore,boolean playerStand,boolean computerStand){
+    public boolean computerAI(int computerScore,Cards[][] computerHand,Cards[][] computerBoard,int time,Cards[][] deck,int playerScore,boolean playerStand,boolean computerStand){
         int winCondition = 20;
         int lengthBoard = computerBoard.length;
         int lengthHand = computerHand.length;
@@ -569,7 +600,7 @@ public int notZero(int x) {
             }
         }
          }
-
+        return computerStand;
     }
 
   
@@ -626,9 +657,7 @@ public int notZero(int x) {
     
       */
         int tour= 0;
-        
-        while(tour<5){
-            Functions function = new Functions();
+        Functions function = new Functions();
         
             Cards[][] deck = function.createDeck();//to create deck
 
@@ -646,19 +675,115 @@ public int notZero(int x) {
             Cards[][] gameBoard = function.gameBoard(deck);
 
             function.area("Computer's Hand","Computer's Board","Your Board   ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
+            
+            int computerWin = 0;
+            int playerWin = 0;
+
+            function.inToGame(gameDeck, hands, computerWin, playerWin,deck);
+            
+            
+            
+            
+            
+        }
+    
+    public void inToGame(Cards[][] gameDeck,Cards[][] hands,int computerWin,int playerWin,Cards[][] deck){
+        
+        Functions function = new Functions();
+        
+        
+        Cards[][] gameBoard = function.gameBoard(deck);
+
+        boolean playerStand = false;
+        boolean computerStand = false;        
+        int pcScore= 0;
+        int playerScore=0;
+        int timePlayer = 0;
+        int timeComputer = 0;        
+        int tour = 0;
+        clearBoard(gameBoard);
+        function.pickCardForPc(gameDeck, gameBoard,timeComputer);
+        timeComputer=timeComputer+1;
+        function.pickCard(gameDeck, gameBoard, timePlayer);
+        timePlayer=timePlayer+1;
+        function.area("Computer's Hand","Computer's Board","Your Board     ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
+        while(tour<8){
+            if(playerStand==false){
+                int choice = function.choice();
+                if(choice==3){
+                    playerStand=true;
+                }
+                playerScore=playerScore(gameBoard[1]);
+
+                function.useChoice(choice, gameDeck, gameBoard,hands, timePlayer,playerStand);
+                timePlayer = timePlayer +1;
+                playerScore=playerScore(gameBoard[1]);
+                if(playerScore>20){
+                   computerWin=computerWin+1;
+                    break;
+                }    
+            
+            }
+            pcScore = computerScore(gameBoard[0]);
+            if(computerStand==false){
+            
+            computerStand = function.computerAI(pcScore, hands, gameBoard, timeComputer, gameDeck,playerScore,playerStand,computerStand);
+            timeComputer = timeComputer+1;    
+            pcScore = computerScore(gameBoard[0]);
+            
+            }
+            function.area("Computer's Hand","Computer's Board","Your Board     ","Your Hand      ",hands[0],gameBoard[0],gameBoard[1], hands[1]);
+            tour = tour+1;
+            if(pcScore>20){
+                playerWin=playerWin+1;
+                break;
+            }
+            if(playerScore==20){
+                playerWin=playerWin+1;
+                break;
+            }
+            if(playerScore==20){
+                  playerWin=playerWin+1;
+                    break;
+            }
+            if(computerStand==true&&playerStand==true){
+                if(pcScore<playerScore){
+                    playerWin=playerWin+1;
+                    break;
+                }
+                else if(pcScore == playerScore){
+                  System.out.println("There Is tie");
+                  break;
+                }
+                else{
+                    computerWin=computerWin+1;
+                    break;
+                }
+            }
+
+        }
+        System.out.println("_______________________________");
+        
+        System.out.println("Computer's win : " + computerWin);
+        System.out.println("Player's win : "+playerWin);
+        System.out.println("_______________________________");
+        if(computerWin==3){
+            System.out.println("Computer Win The Game... :(");
+            System.out.println("Computer Score : " + computerWin);
+            System.out.println("Player Score : "+playerWin);
+        }
+        else if(playerWin==3){
+            System.out.println("You Win The Game... :)");
+            System.out.println("Computer Score : " + computerWin);
+            System.out.println("Player Score : "+playerWin);
+        }
+        else{
+            function.inToGame(gameDeck, hands, computerWin, playerWin,deck);
         }
         
-        
-        
-        
+    }
         
 
-            
-            
-            
-            
-        }
-        
         
         
         
