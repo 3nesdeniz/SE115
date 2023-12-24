@@ -77,15 +77,25 @@ public class Functions {
 
     System.out.println("                  ____________________________________________________________________________");
 }
+    public void areaSchemaHand(String person, Cards[] cards){
+        System.out.println("                  ____________________________________________________________________________");
+        System.out.println("");
+
+        System.out.print(person + "      ");
+        printCardsForHands(cards);
+        System.out.println("");
+
+        System.out.println("                  ____________________________________________________________________________");   
+    }
 
     public void area(String name1,String name2,String name3,String name4,Cards[] card1,Cards[] card2,Cards[] card3,Cards[] card4){
-        areaSchema(name1,card1);
+        areaSchemaHand(name1,card1);
         System.out.println("");
         areaSchema(name2,card2);
         System.out.println("");
         areaSchema(name3,card3);
         System.out.println("");
-        areaSchema(name4,card4);
+        areaSchemaHand(name4,card4);
         System.out.println("");
         totalScore(card2,card3);
 
@@ -262,6 +272,39 @@ public int notZero(int x) {
         }
     }
 }
+    public void printCardsForHands(Cards[] cards){
+                for (Cards card : cards) {
+             if (card != null){
+                
+                if(card.isComputerHand()==true){
+
+                       
+                       System.out.print("     X      ");
+                        
+                }
+                else{
+                   if(card.isPlay()==true){
+                       System.out.print("     O      ");
+                   }
+                   else{
+                        if(card.getIsJoker() == true){
+                            System.out.print(card.getColor() + "    ");
+                        }
+                        else{
+                        System.out.print(card.toString() + "      ");
+                        }
+                   }
+                }
+                
+            
+            }else{
+                 System.out.print("     O      ");
+             }
+
+            
+        
+        }
+    }
 
     public Cards[][] createGameDeck(Cards[][] deck) {
         Cards gameDeck[][] = new Cards[4][10];
@@ -365,7 +408,7 @@ public int notZero(int x) {
     return choice1;
 }
  
-    public void useChoice(int x, Cards[][] deck,Cards[][] board,Cards[][] hand,int timePlayer,boolean playerStand){
+    public int useChoice(int x, Cards[][] deck,Cards[][] board,Cards[][] hand,int timePlayer,boolean playerStand){
     if(x == 1){
         pickCard(deck,board,timePlayer);
         timePlayer = timePlayer+1;
@@ -380,6 +423,7 @@ public int notZero(int x) {
 
             choice1 = sc2.nextInt();
             if(choice1 == 1 || choice1 == 2) {
+                timePlayer = timePlayer+1;
                 break;
             } else {
                 System.out.println("Invalid input. Please enter a valid choice.");
@@ -391,6 +435,7 @@ public int notZero(int x) {
     }
         if(choice1 == 1){
             useChoice(2, deck,board,hand,timePlayer,playerStand);
+            timePlayer = timePlayer+1;
         }
     }
     else if (x == 2) {
@@ -416,7 +461,7 @@ public int notZero(int x) {
         int k = choice();
         useChoice(k,deck,board,hand,timePlayer,playerStand);
     }
-        
+        return timePlayer;
     }
     
     public void totalScore(Cards[] pc,Cards[] player){
@@ -715,8 +760,7 @@ public int notZero(int x) {
                 }
                 playerScore=playerScore(gameBoard[1]);
 
-                function.useChoice(choice, gameDeck, gameBoard,hands, timePlayer,playerStand);
-                timePlayer = timePlayer +1;
+                timePlayer = function.useChoice(choice, gameDeck, gameBoard,hands, timePlayer,playerStand);
                 playerScore=playerScore(gameBoard[1]);
                 if(playerScore>20){
                    computerWin=computerWin+1;
@@ -739,12 +783,22 @@ public int notZero(int x) {
                 break;
             }
             if(playerScore==20){
-                playerWin=playerWin+1;
-                break;
-            }
-            if(playerScore==20){
-                  playerWin=playerWin+1;
+                if(pcScore==20){
+                    System.out.println("There Is Draw");
                     break;
+                }else{
+                    playerWin=playerWin+1;
+                    break;
+                }
+            }
+            if(pcScore==20){
+                if(playerScore==20){
+                    break;
+                }else{
+                  computerWin=computerWin+1;
+                    
+                  break;
+                }
             }
             if(computerStand==true&&playerStand==true){
                 if(pcScore<playerScore){
@@ -763,6 +817,7 @@ public int notZero(int x) {
 
         }
         System.out.println("_______________________________");
+        function.totalScore(gameBoard[0],gameBoard[1]);
         
         System.out.println("Computer's win : " + computerWin);
         System.out.println("Player's win : "+playerWin);
@@ -782,7 +837,8 @@ public int notZero(int x) {
         }
         
     }
-        
+      // for all blue you can use for loop in cards do 20 .....(20 olduklarında hepsi blue mu diye kontrol edersin hepsi blue ise 3 yaparsın ??? bundan emin değilim blue 
+    //jack adı nerden geliyor bakmam lazım 
 
         
         

@@ -54,6 +54,7 @@ public class Cards {
     public void setIsComputerHand(boolean isComputerHand) {
         this.isComputerHand = isComputerHand;
     }
-   
+
+
 }
     
